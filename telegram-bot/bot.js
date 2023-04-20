@@ -1,5 +1,6 @@
 require("dotenv").config();
 const express = require("express");
+const axios = require("axios");
 const TelegramBot = require("node-telegram-bot-api");
 const bodyParser = require("body-parser");
 const app = express();
@@ -28,6 +29,63 @@ bot.onText(/\/startMonitoring/, (msg) => {
     bot.sendMessage(chatId, `Your chat ID is: ${chatId}`);
 });
 
+const userStates = {};
+
+bot.onText(/\/eventRegister/, (msg) => {
+    const chatId = msg.chat.id;
+    userStates[chatId] = {
+        step: 1,
+    };
+    bot.sendMessage(chatId, 'What contract address do you want to monitor?');
+});
+
+bot.on('message', (msg) => {
+    const chatId = msg.chat.id;
+
+    if (userStates[chatId]) {
+        switch (userStates[chatId].step) {
+            case 1:
+                userStates[chatId].contractAddress = msg.text;
+                userStates[chatId].step = 2;
+                bot.sendMessage(chatId, 'What event do you want to monitor?');
+                break;
+
+            case 2:
+                userStates[chatId].eventName = msg.text;
+                // Send the POST request with the user's inputs
+                const data = {
+                    chatId: chatId,
+                    contractAddress: userStates[chatId].contractAddress,
+                    eventName: userStates[chatId].eventName,
+                };
+
+                const config = {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                };
+
+                axios
+                    .post('http://localhost:3005/event-register', data, config)
+                    .then((response) => {
+                        bot.sendMessage(chatId, 'Event registered successfully!');
+                    })
+                    .catch((error) => {
+                        bot.sendMessage(chatId, 'Error registering event.');
+                        console.error('Request failed:', error.message);
+                    });
+
+                // Reset the user state
+                delete userStates[chatId];
+
+                break;
+
+            default:
+                bot.sendMessage(chatId, 'Invalid input. Please start again with /eventRegister.');
+        }
+    }
+});
+
 app.use(express.json());
 
 app.post("/webhook", async (req, res) => {
@@ -40,5 +98,5 @@ app.post("/webhook", async (req, res) => {
 });
 
 app.listen(port, () => {
-    console.log(`Listening for Transfers`);
+    console.log(`Listening to telegram`);
 });

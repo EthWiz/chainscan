@@ -10,8 +10,8 @@ with open('./token_abi.json', mode="r") as f:
     token_abi = json.load(f)
 
 # Ethereum configuration
-INFURA_URL = os.environ.get('INFURA_URL')  # Replace with your Infura URL
-# Replace with the ERC20 contract ABI
+INFURA_URL = os.environ.get('INFURA_URL') 
+
 ERC20_CONTRACT_ADDRESS = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"  
 
 w3 = Web3(Web3.HTTPProvider(INFURA_URL))
