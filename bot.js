@@ -9,27 +9,10 @@ const port = 5001;
 
 app.use(bodyParser.json());
 
-app.use((error, req, res, next) => {
-  if (error instanceof SyntaxError) {
-    console.error("Malformed JSON:", error);
-    res.status(400).json({ error: "Invalid JSON format" });
-    console.log(typeof res.body);
-  } else {
-    next();
-  }
-});
 const TELEGRAM_BOT_TOKEN = process.env.BOT_TOKEN;
 const bot = new TelegramBot(TELEGRAM_BOT_TOKEN, { polling: true });
 const etherscanApiKey = process.env.ETHERSCAN_API_KEY;
 let chatId = null;
-
-// Message handler to get chat ID
-bot.onText(/\/startMonitoring/, (msg) => {
-  chatId = msg.chat.id;
-  console.log("Chat ID:", chatId);
-  // Reply to the user with their chat ID
-  bot.sendMessage(chatId, `Your chat ID is: ${chatId}`);
-});
 
 const userStates = {};
 
@@ -41,9 +24,36 @@ bot.onText(/\/eventRegister/, (msg) => {
   bot.sendMessage(chatId, "What contract address do you want to monitor?");
 });
 
+bot.onText(/\/eventDelete/, (msg) => {
+    const chatId = msg.chat.id;
+    userStates[chatId].step = -1;
+    userEvents = axios
+    .get(`http://localhost:3005/event-register/list/${chatId}`)
+    .then((res) => {
+        userStates[chatId].userEvents = res.data;        
+      let eventsString = res.data.map((event, index) => `Number ${index}\nContract: ${event.contractAddress}, Event: ${event.eventName}`).join("\n");
+      bot.sendMessage(chatId, "Your events: \n\n" + eventsString + "\n\nWhich one (by number) would you like to cancel?");
+    });
+  });
+
+bot.onText(/\/eventList/, (msg) => {
+  const chatId = msg.chat.id;
+  userEvents = axios
+    .get(`http://localhost:3005/event-register/list/${chatId}`)
+    .then((res) => {
+      let eventsString = res.data.map((event) => `Alert ID: ${event.alertId}\nContract address: ${event.contractAddress}, Event name: ${event.eventName}`).join("\n");
+      bot.sendMessage(chatId, "Your events: \n\n" + eventsString);
+    });
+});
+
+bot.onText(/\/new/,()=>{
+    console.log(`user state before: ${userStates[chatId]}`);
+    delete userStates[chatId]
+    console.log(`user state after: ${userStates[chatId]}`);
+});
+
 bot.on("message", (msg) => {
   const chatId = msg.chat.id;
-
   if (userStates[chatId]) {
     switch (userStates[chatId].step) {
       case 1:
@@ -120,7 +130,7 @@ bot.on("message", (msg) => {
         };
 
         axios
-          .post("http://localhost:3005/event-register", data, config)
+          .post("http://localhost:3005/event-register/add", data, config)
           .then((response) => {
             bot.sendMessage(chatId, "Event registered successfully!");
           })
@@ -132,7 +142,24 @@ bot.on("message", (msg) => {
         // Reset the user state
         delete userStates[chatId];
 
+
         break;
+      case -1:
+        const eventToDelete = userStates[chatId].userEvents[msg.text];
+        console.log(eventToDelete);
+        const alertId = eventToDelete.alertId;
+
+          axios
+            .get(`http://localhost:3005/event-register/delete/${alertId}`, data, config)
+            .then((response) => {
+              bot.sendMessage(chatId, "Event deleted successfully!");
+            })
+            .catch((error) => {
+              bot.sendMessage(chatId, "Error deleting event.");
+              console.error("Request failed:", error.message);
+            });
+        delete userStates[chatId];
+
       default:
         delete userStates[chatId];
         bot.sendMessage(
@@ -145,27 +172,26 @@ bot.on("message", (msg) => {
 
 app.use(express.json());
 
-
 app.post("/webhook", async (req, res) => {
-    console.log('received new block')
-    let data = req.body;
-    for(let i = 0; i < data.length; i++){
-        const alert = data[i];
-        console.log(alert.register.chatId);
-        const chatId = alert.register.chatId;
-        const message = `Just in! On block ${alert.blockNumber} we identified an ${alert.eventName}, if you want to investigate, tx hash is ${alert.txHash}`
-        if (chatId !== null) {
-          await bot.sendMessage(chatId, message).catch((error) => {
-            console.error("Error sending message:", error.message);
-          });
-          await sleep(500); // sleep for 1 second
-        }
+  console.log("received new block");
+  let data = req.body;
+  for (let i = 0; i < data.length; i++) {
+    const alert = data[i];
+    console.log(alert.register.chatId);
+    const chatId = alert.register.chatId;
+    const message = `Just in! On block ${alert.blockNumber} we identified an ${alert.eventName}, if you want to investigate, tx hash is ${alert.txHash}`;
+    if (chatId !== null) {
+      await bot.sendMessage(chatId, message).catch((error) => {
+        console.error("Error sending message:", error.message);
+      });
+      await sleep(500); // sleep for 1 second
     }
+  }
 });
 
 function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }  
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 app.listen(port, () => {
   console.log(`Listening to telegram`);
