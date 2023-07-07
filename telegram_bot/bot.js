@@ -28,7 +28,7 @@ bot.onText(/\/eventDelete/, (msg) => {
     const chatId = msg.chat.id;
     userStates[chatId].step = -1;
     userEvents = axios
-    .get(`http://localhost:3005/event-register/list/${chatId}`)
+    .get(`http://registry:3005/event-register/list/${chatId}`)
     .then((res) => {
         userStates[chatId].userEvents = res.data;        
       let eventsString = res.data.map((event, index) => `Number ${index}\nContract: ${event.contractAddress}, Event: ${event.eventName}`).join("\n");
@@ -39,7 +39,7 @@ bot.onText(/\/eventDelete/, (msg) => {
 bot.onText(/\/eventList/, (msg) => {
   const chatId = msg.chat.id;
   userEvents = axios
-    .get(`http://localhost:3005/event-register/list/${chatId}`)
+    .get(`http://registry:3005/event-register/list/${chatId}`)
     .then((res) => {
       let eventsString = res.data.map((event) => `Alert ID: ${event.alertId}\nContract address: ${event.contractAddress}, Event name: ${event.eventName}`).join("\n");
       bot.sendMessage(chatId, "Your events: \n\n" + eventsString);
@@ -130,7 +130,7 @@ bot.on("message", (msg) => {
         };
 
         axios
-          .post("http://localhost:3005/event-register/add", data, config)
+          .post("http://registry:3005/event-register/add", data, config)
           .then((response) => {
             bot.sendMessage(chatId, "Event registered successfully!");
           })
@@ -150,7 +150,7 @@ bot.on("message", (msg) => {
         const alertId = eventToDelete.alertId;
 
           axios
-            .get(`http://localhost:3005/event-register/delete/${alertId}`, data, config)
+            .get(`http://registry:3005/event-register/delete/${alertId}`, data, config)
             .then((response) => {
               bot.sendMessage(chatId, "Event deleted successfully!");
             })

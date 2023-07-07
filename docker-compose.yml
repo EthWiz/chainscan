@@ -1,0 +1,21 @@
+version: '3.8'
+services:
+  telegram_bot:
+    build:
+      context: .
+      dockerfile: Dockerfile.bot
+    ports:
+      - 5001:5001
+    env_file: .env
+  block_listener:
+    build:
+      context: .
+      dockerfile: Dockerfile.listener
+    env_file: .env
+  registry:
+    build:
+      context: .
+      dockerfile: Dockerfile.registry
+    ports:
+      - 3005:3005
+    env_file: .env

@@ -1,20 +1,20 @@
-const fs = require('fs');
+const axios = require('axios');
 
 
 class Block {
     constructor(logs) {
         this.logs = logs;
-        this.registers = this.readJSONFile();
+        this.registers = null;
     }
 
-    readJSONFile() {
-        const rawData = fs.readFileSync('./event-register.json', 'utf8');
-        const parsedData = JSON.parse(rawData);
-        return parsedData;
+    async init() {
+        this.registers = await this.getRegistryData();
     }
 
-    printLogs(){
-        console.log(this.logs)
+    getRegistryData() {
+        return axios.get('http://registry:3005/event-register/list/all')
+            .then(response => response.data)
+            .catch(err => console.error(err));
     }
 
     checkEvents() {
