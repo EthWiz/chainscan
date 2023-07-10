@@ -1,13 +1,4 @@
-# telegram-event-listener
+# Chainscan
 
-## Open tasks:
-- If user inputs a proxy contract, show him the implementaion possible events
-- user inputs handeling
-- Allow user to unregister from alerts
-- Stabalize all Telegam bot state cases
-- Add alertIds to register
+Checkout Notion board for more details on Development and roadmap: https://chainscan.notion.site/Chainscan-b79959d5d5db48478686ddd6de949ffa?pvs=4
 
-## Big stuff
-- adding a next js UI where users can configure alerts
-- Dockerizing every thing
-- Storing registered alerts in DB

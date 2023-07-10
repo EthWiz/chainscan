@@ -4,8 +4,10 @@ const bodyParser = require("body-parser");
 const ethers = require("ethers");
 const app = express();
 app.use(bodyParser.json());
-const filename = ".apps/registry/data/event-register.json";
+const filename = "./apps/registry/data/event-register.json";
 const cors = require('cors')
+
+const base_url = process.env.API_BASE_URL
 
 app.use(cors({
   origin: 'http://localhost:5173'

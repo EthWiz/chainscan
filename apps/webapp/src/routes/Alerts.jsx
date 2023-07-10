@@ -5,13 +5,15 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Alert from '../components/alert/Alert';
+const base_url = import.meta.env.VITE_API_URL;
+
 const Alerts = () => {
     const [data, setData] = useState([]);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get('http://localhost:3005/event-register/list/all');
+                const response = await axios.get(`http://${base_url}:3005/event-register/list/all`);
                 setData(response.data);
             } catch (error) {
                 console.error('Error fetching data: ', error);

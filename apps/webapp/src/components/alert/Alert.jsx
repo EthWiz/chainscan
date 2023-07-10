@@ -1,11 +1,12 @@
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import axios from 'axios';
+const base_url = import.meta.env.VITE_API_URL;
 
 const Alert = ({ alert, handleDelete }) => {
     const deleteAlert = async () => {
         try {
-            await axios.delete(`http://localhost:3005/event-register/remove/${alert.alertId}`);
+            await axios.delete(`http://${base_url}:3005/event-register/remove/${alert.alertId}`);
             console.log(`deleting ${alert.alertId}`);
             handleDelete(alert.alertId);
         } catch (error) {

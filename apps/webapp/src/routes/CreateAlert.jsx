@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { ethers } from "ethers";
 import Select from "react-select";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
-
+const base_url = import.meta.env.VITE_API_URL;
 const etherscanApiKey = import.meta.env.VITE_ETHERSCAN_API_KEY;
 
 const CreateAlert = () => {
@@ -47,7 +47,7 @@ const CreateAlert = () => {
   const handleCreateAlert = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:3005/event-register/add",
+        `http://${base_url}:3005/event-register/add`,
         {
           chatId,
           eventName: selectedEvent.value,
