@@ -1,7 +1,0 @@
-# Dockerfile.bot
-FROM node:14
-WORKDIR /app
-COPY ./block_listener/package*.json ./
-RUN npm install
-COPY ./block_listener .
-CMD [ "node", "block-listener.js" ]

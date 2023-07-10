@@ -1,7 +1,0 @@
-# Dockerfile.bot
-FROM node:14
-WORKDIR /app
-COPY ./registry/package*.json ./
-RUN npm install
-COPY ./registry .
-CMD [ "node", "registry.js" ]

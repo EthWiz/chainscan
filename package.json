@@ -1,0 +1,24 @@
+{
+  "name": "chainscan",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "version": "1.0.0",
+  "description": "## Open tasks: - If user inputs a proxy contract, show him the implementaion possible events - user inputs handeling - Allow user to unregister from alerts - Stabalize all Telegam bot state cases - Add alertIds to register",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "service1": "node ./apps/telegram_bot/src/bot.js",
+    "service2": "node ./apps/registry/src/registry.js",
+    "service3": "node ./apps/chain_listener/src/chain_listener.js",
+    "service4": "pnpm --prefix ./apps/webapp run dev",
+    "start": "run-p service1 service2 service3 service4"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "npm-run-all": "^4.1.5"
+  }
+}

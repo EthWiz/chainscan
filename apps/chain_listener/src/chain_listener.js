@@ -1,7 +1,7 @@
 const ethers = require('ethers');
 require("dotenv").config();
 const fs = require('fs');
-const Block = require('./Block');
+const Block = require('./Block.js');
 const axios = require('axios');
 const infura_url = process.env.INFURA_URL;
 let provider = new ethers.JsonRpcProvider(infura_url);
@@ -12,7 +12,7 @@ async function main() {
         console.log(`New block: ${blockNumber}`);
         const logs = await provider.getLogs({fromBlock: blockNumber, toBlock: blockNumber});
         const block = new Block(logs);
-        await block.init(); // Initialize block before checking events
+        await block.init();
         const matchedEvents = block.checkEvents();
         const config = {
             headers: {

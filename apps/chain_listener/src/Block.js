@@ -4,20 +4,37 @@ const axios = require('axios');
 class Block {
     constructor(logs) {
         this.logs = logs;
-        this.registers = null;
+        this.registers = [];
     }
 
     async init() {
-        this.registers = await this.getRegistryData();
+        try {
+            this.registers = await this.getRegistryData();
+            if (!Array.isArray(this.registers)) {
+                throw new Error('Registry data is not an array');
+            }
+        } catch (error) {
+            console.error('Error getting registry data:', error);
+        }
     }
 
     getRegistryData() {
         return axios.get('http://registry:3005/event-register/list/all')
-            .then(response => response.data)
-            .catch(err => console.error(err));
+            .then(response => {
+                if (response.data === 'No register file') {
+                    throw new Error('No register file');
+                }
+                return response.data;
+            })
+            .catch(err => { throw err; });
     }
 
     checkEvents() {
+        if (!this.registers) {
+            console.error('No registers available');
+            return;
+        }
+
         const matchedEvents = [];
         this.logs.forEach(log => {
             this.registers.forEach(register => {

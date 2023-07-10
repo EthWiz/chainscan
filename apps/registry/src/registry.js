@@ -4,7 +4,12 @@ const bodyParser = require("body-parser");
 const ethers = require("ethers");
 const app = express();
 app.use(bodyParser.json());
-const filename = "./event-register.json";
+const filename = ".apps/registry/data/event-register.json";
+const cors = require('cors')
+
+app.use(cors({
+  origin: 'http://localhost:5173'
+}))
 
 app.post("/event-register/add", (req, res) => {
   const userInfo = req.body;
@@ -40,7 +45,7 @@ app.post("/event-register/add", (req, res) => {
 });
 
 app.get("/event-register/list/all", (req, res) => {
-  if (fs.existsSync(filename) && fs.statSync(filename).size > 0) {
+  if (fs.existsSync(filename)) {
     data = JSON.parse(fs.readFileSync(filename, "utf8"));
   } else {
     res.status(404).send("No register file");
@@ -48,6 +53,36 @@ app.get("/event-register/list/all", (req, res) => {
   }
   res.status(200).send(data);
 });
+app.delete("/event-register/remove/:alertId", (req, res) => {
+  const requestedAlertId = req.params.alertId;
+  console.log(`req to delete alert! ${requestedAlertId}`);
+
+  if (fs.existsSync(filename) && fs.statSync(filename).size > 0) {
+    let data = JSON.parse(fs.readFileSync(filename, "utf8"));
+    const initialLength = data.length;
+
+    if (requestedAlertId) {
+      // Exclude item with the requested alertId
+      data = data.filter(item => item.alertId !== requestedAlertId);
+
+      // Check if the alertId was not found
+      if (initialLength === data.length) {
+        res.status(404).send("Alert id doesn't exist");
+        return;
+      }
+
+      // Write the filtered data back to the file
+      fs.writeFileSync(filename, JSON.stringify(data), "utf8");
+    }
+  } else {
+    res.status(404).send("No register file");
+    return;
+  }
+  res.status(200).send("Success!");
+});
+
+
+
 app.get("/event-register/list/:chatId?", (req, res) => {
   const requestedChatId = parseInt(req.params.chatId);
   console.log(`new request! ${requestedChatId}`);

@@ -1,8 +1,0 @@
-# Dockerfile.bot
-FROM node:14
-WORKDIR /app
-COPY ./telegram_bot/package*.json ./
-RUN npm install
-COPY ./telegram_bot .
-EXPOSE 5001
-CMD [ "node", "bot.js" ]

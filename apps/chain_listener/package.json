@@ -1,8 +1,8 @@
 {
-  "name": "telegram_bot",
+  "name": "chain_listener",
   "version": "1.0.0",
   "description": "",
-  "main": "bot.js",
+  "main": "Block.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -11,10 +11,8 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^1.4.0",
-    "body-parser": "^1.20.2",
     "dotenv": "^16.3.1",
     "ethers": "^6.6.2",
-    "express": "^4.18.2",
-    "node-telegram-bot-api": "^0.61.0"
+    "nodemon": "^2.0.22"
   }
 }
