@@ -1,0 +1,13 @@
+{
+  "name": "@chainscan/ts_interfaces",
+  "version": "1.0.0",
+  "main": "dist/eventService.js",
+  "types": "dist/eventService.d.ts",
+
+  "scripts": {
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "typescript": "^5.1.6"
+  }
+}

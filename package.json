@@ -1,22 +1,26 @@
 {
-  "name": "telegram-bot-node",
+  "name": "chainscan",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "version": "1.0.0",
-  "description": "",
-  "main": "app.js",
+  "description": "## Open tasks: - If user inputs a proxy contract, show him the implementaion possible events - user inputs handeling - Allow user to unregister from alerts - Stabalize all Telegam bot state cases - Add alertIds to register",
+  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "service1": "node ./apps/telegram_bot/src/bot.js",
+    "service2": "tsc -p apps/registry && node ./apps/registry/dist/server.js",
+    "service3": "node ./apps/chain_listener/src/chain_listener.js",
+    "service4": "pnpm --prefix ./apps/webapp run dev",
+    "start": "run-p service1 service2 service3 service4"
   },
-  "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "axios": "^1.4.0",
-    "body-parser": "^1.20.2",
-    "dotenv": "^16.0.3",
-    "ethers": "^6.6.2",
-    "express": "^4.18.2",
-    "ngrok": "^4.3.3",
-    "node-telegram-bot-api": "^0.61.0",
-    "nodemon": "^2.0.22"
+  "devDependencies": {
+    "@types/node": "^20.4.1",
+    "npm-run-all": "^4.1.5",
+    "ts-node": "^10.9.1"
   }
 }
