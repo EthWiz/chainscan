@@ -1,32 +1,23 @@
 import { Outlet, Link } from "react-router-dom";
-import { useEffect } from "react";
-
+import { NavBarButtons } from "../components/NavBarButtons";
+import Auth0ProviderWithNavigate from "./auth0-provider-with-navigate";
 export default function Root() {
-  useEffect(() => {
-    const script = document.createElement('script');
-    script.src = "https://telegram.org/js/telegram-widget.js?7";
-    script.setAttribute('data-telegram-login', import.meta.env.VITE_BOT_USERNAME);
-    script.setAttribute('data-size', 'large');
-    script.setAttribute('data-auth-url', 'AUTH_URL');
-    script.setAttribute('data-request-access', 'write');
-    script.async = true;
-    document.getElementById('telegramBtn').appendChild(script);
-  }, []);
-
   return (
     <>
+      {/* <Auth0ProviderWithNavigate> */}
       <div id="sidebar">
         <nav>
           <h1>Chainscan</h1>
+          <NavBarButtons />
           <ul>
             <li>
-              <Link to={`/create-alert`}>Create Alert</Link>
+              <Link to={`/app/create-alert`}>Create Alert</Link>
             </li>
             <li>
-              <Link to={`/alerts`}>My Alerts</Link>
+              <Link to={`/app/alerts`}>My Alerts</Link>
             </li>
             <li>
-            <div id="telegramBtn"></div>
+              <div id="telegramBtn"></div>
             </li>
           </ul>
         </nav>
@@ -34,6 +25,7 @@ export default function Root() {
       <div id="detail">
         <Outlet />
       </div>
+      {/* </Auth0ProviderWithNavigate> */}
     </>
   );
 }
