@@ -1,8 +1,7 @@
 {
-    "compilerOptions": {
-      "outDir": "dist",
-      "declaration": true,
-    },
-    "include": ["*.ts"]
-  }
-  
+  "compilerOptions": {
+    "outDir": "./dist",
+    "declaration": true
+  },
+  "include": ["./**/*.ts"]
+}

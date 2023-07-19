@@ -67,6 +67,7 @@ class EventServiceImpl {
         userInfo["alertId"] = this.generateAlertId();
         data.push(userInfo);
         this.saveEventData(data);
+        return userInfo;
     }
     listEvents() {
         return this.getEventData();

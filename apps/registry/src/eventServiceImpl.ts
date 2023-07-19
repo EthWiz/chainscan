@@ -45,7 +45,7 @@ export class EventServiceImpl implements EventService {
     return ethers.keccak256(ethers.toUtf8Bytes(eventName));
   }
 
-  public addEvent(userInfo: UserInfo): void {
+  public addEvent(userInfo: UserInfo): object {
     let data = this.getEventData();
 
     userInfo["signatureHash"] = this.generateSignatureHash(
@@ -55,6 +55,7 @@ export class EventServiceImpl implements EventService {
 
     data.push(userInfo);
     this.saveEventData(data);
+    return userInfo;
   }
 
   public listEvents(): UserInfo[] {

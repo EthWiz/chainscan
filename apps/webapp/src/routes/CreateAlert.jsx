@@ -4,7 +4,7 @@ import { ethers } from "ethers";
 import Select from "react-select";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
-import DashboardLayout from "../components/dashboard/DashboardLayout";
+import DashboardLayout from "../layouts/DashboardLayout";
 const base_url = import.meta.env.VITE_API_URL;
 const etherscanApiKey = import.meta.env.VITE_ETHERSCAN_API_KEY;
 
