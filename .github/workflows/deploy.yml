@@ -1,0 +1,54 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Debugging
+        env:
+          PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          HOST: ${{ secrets.HOST }}
+          USERNAME: ${{ secrets.USERNAME }}
+        run: |
+          echo "$PRIVATE_KEY" | wc -l  # should print a number greater than 1
+          echo "$HOST"  # should print the IP address or DNS name of your EC2 instance
+          echo "$USERNAME"  # should print the username you use to log into your EC2 instance
+
+      - name: Deploy to server
+        run: |
+          mkdir -p ~/.ssh
+          echo "$PRIVATE_KEY" | base64 -d > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh -T -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa $USERNAME@$HOST << 'EOF'
+            # Initialize NVM
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+            [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+            
+            # Change ownership of directory
+            sudo chown -R $USERNAME:$USERNAME /home/ubuntu/chainscan
+
+            cd /home/ubuntu/chainscan
+            git pull
+
+            nvm install
+
+            pnpm install
+            pnpm run build-webapp-simple
+
+            sudo systemctl restart chainscan
+
+
+          EOF
+        shell: bash
+        env:
+          PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          HOST: ${{ secrets.HOST }}
+          USERNAME: ${{ secrets.USERNAME }}

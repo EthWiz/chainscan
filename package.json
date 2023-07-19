@@ -14,6 +14,7 @@
     "service2": "tsc -p apps/registry && node ./apps/registry/dist/server.js",
     "service3": "node ./apps/chain_listener/src/chain_listener.js",
     "service4": "pnpm --prefix ./apps/webapp run dev",
+    "build-webapp-simple": "pnpm --prefix ./apps/webapp-simple run build",
     "start": "run-p service1 service2 service3 service4"
   },
   "author": "",
