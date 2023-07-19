@@ -6,10 +6,11 @@ interface AlertProps {
 
 export const Alert: React.FC<AlertProps> = ({ alert }) => {
   return (
-    <div className="alert-card">
-      <h1>{alert.alertId}</h1>
-      <h2>{alert.contractAddress}</h2>
-      <p>{alert.eventName}</p>
+    <div className="card">
+      <div className="card-body">
+        <h2>{alert.eventName}</h2>
+        <p>{alert.contractAddress}</p>
+      </div>
     </div>
   );
 };

@@ -7,10 +7,17 @@ interface AlertsProps {
 
 export const Alerts: React.FC<AlertsProps> = ({ alerts }) => {
   return (
-    <div>
-      {alerts.map((element) => (
-        <Alert key={element.alertId} alert={element} />
-      ))}
+    <div className="container">
+      <div className="row">
+        {alerts.map((element) => (
+          <div
+            className="col-sm-12 col-md-6 col-lg-4 p-3"
+            key={element.alertId}
+          >
+            <Alert alert={element} />
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

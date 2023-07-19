@@ -1,23 +1,41 @@
 import { Link } from "react-router-dom";
-import "./HomeNav.css";
+
 export const HomeNav = () => {
   return (
-    <div className="nav-bar">
-      <div>
-        <img
-          className="logo"
-          src="https://altcoinsbox.com/wp-content/uploads/2022/12/coinbase-logo-750x750.webp"
-          alt="logo"
-        />
-      </div>
-      <div className="nav-links">
-        <Link className="links" to="/">
-          Home
+    <nav className="navbar navbar-expand-lg navbar-light bg-light">
+      <div className="container-fluid ">
+        <Link className="navbar-brand" to="/">
+          <img
+            className="logo"
+            style={{ width: "50px", height: "50px" }}
+            src="https://altcoinsbox.com/wp-content/uploads/2022/12/coinbase-logo-750x750.webp"
+            alt="logo"
+          />
+          Chainscan
         </Link>
-        <Link className="links" to="alerts">
-          Alerts
-        </Link>
+        <button
+          className="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span className="navbar-toggler-icon"></span>
+        </button>
+        <div
+          className="collapse navbar-collapse justify-content-end"
+          id="navbarNav"
+        >
+          <Link className="nav-link active" to="/">
+            Home
+          </Link>
+          <Link className="nav-link" to="/alerts">
+            Alerts
+          </Link>
+          <Link className="btn btn-primary" to="/app">
+            App
+          </Link>
+        </div>
       </div>
-    </div>
+    </nav>
   );
 };
