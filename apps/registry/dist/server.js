@@ -17,8 +17,8 @@ app.post("/event-register/add", (req, res) => {
         res.status(400).send(error);
         return;
     }
-    eventService.addEvent(userInfo);
-    res.status(200).send("User information saved successfully");
+    const data = eventService.addEvent(userInfo);
+    res.status(200).send(data);
 });
 app.get("/event-register/list/all", (req, res) => {
     const data = eventService.listEvents();

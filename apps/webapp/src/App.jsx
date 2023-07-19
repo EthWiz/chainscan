@@ -1,37 +1,55 @@
-import Root from "./routes/root";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import "./index.css";
 import ErrorPage from "./error-page";
-import Alerts from "./routes/Alerts";
+import HomePage from "./routes/Homepage";
+import DashboardLayout from "./layouts/DashboardLayout";
+import { AuthenticationGuard } from "./components/authentication-guard";
 import CreateAlert from "./routes/CreateAlert";
-import { CallbackPage } from "./routes/callback-page";
-import "bootstrap/dist/css/bootstrap.min.css";
+import TestingPage from "./routes/TestingPage";
+import WebsiteLayout from "./layouts/WebsiteLayout";
+import CallbackPage from "./routes/callback-page";
+import AuthLayout from "./layouts/AuthLayout";
+import Alerts, { loader as alertsLoader } from "./routes/Alerts";
 
 const router = createBrowserRouter([
   {
-    path: "/",
-    element: <Root />,
+    element: <AuthLayout />,
     errorElement: <ErrorPage />,
     children: [
       {
-        path: "/alerts",
-        element: <Alerts />,
-      },
-      {
-        path: "/create-alert",
-        element: <CreateAlert />,
+        path: "/",
+        element: <WebsiteLayout />,
+        errorElement: <ErrorPage />,
+        children: [{ index: true, element: <HomePage /> }],
       },
       {
         path: "/callback",
         element: <CallbackPage />,
       },
+      {
+        path: "/app",
+        element: <DashboardLayout />,
+        children: [
+          {
+            index: true,
+            element: <AuthenticationGuard component={CreateAlert} />,
+          },
+          {
+            path: "alerts",
+            element: <AuthenticationGuard component={Alerts} />,
+            loader: { alertsLoader },
+          },
+          {
+            path: "testing",
+            element: <AuthenticationGuard component={TestingPage} />,
+          },
+        ],
+      },
     ],
   },
-  { path: "/alerts", element: <Alerts /> },
-  { path: "/create-alert", element: <CreateAlert /> },
-  { path: "/callback", element: <CallbackPage /> },
 ]);
 
 export const App = () => {
   return <RouterProvider router={router} />;
 };
+
+export default App;

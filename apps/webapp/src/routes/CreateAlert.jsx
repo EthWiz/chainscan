@@ -4,6 +4,7 @@ import { ethers } from "ethers";
 import Select from "react-select";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
+import DashboardLayout from "../layouts/DashboardLayout";
 const base_url = import.meta.env.VITE_API_URL;
 const etherscanApiKey = import.meta.env.VITE_ETHERSCAN_API_KEY;
 
@@ -79,7 +80,9 @@ const CreateAlert = () => {
   }, [contractAddress]);
 
   return (
-    <div style={{ display: "flex", justifyContent: "center", marginTop: "50px" }}>
+    <div
+      style={{ display: "flex", justifyContent: "center", marginTop: "50px" }}
+    >
       <Card style={{ width: "400px", padding: "20px" }}>
         <Card.Body>
           <Card.Title>Create Alert</Card.Title>

@@ -1,7 +1,9 @@
-export const CallbackPage = () => {
+const CallbackPage = () => {
   return (
     <div className="page-layout">
-      <div className="page-layout__content" />
+      <h1>This is call back!!</h1>
     </div>
   );
 };
+
+export default CallbackPage;

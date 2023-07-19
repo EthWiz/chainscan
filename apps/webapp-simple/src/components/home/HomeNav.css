@@ -1,0 +1,22 @@
+.nav-bar {
+  display: flex;
+  justify-content: space-between;
+}
+
+.nav-links {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-right: 100px;
+}
+
+.links {
+  padding: 30px;
+  font-size: 1.3rem;
+}
+
+.logo {
+  width: 100px;
+  height: 100px;
+  margin: 10px;
+}

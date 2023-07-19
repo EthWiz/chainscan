@@ -8,6 +8,7 @@ const eventService = new EventServiceImpl();
 
 app.use(express.json());
 app.use(cors({ origin: "http://localhost:5173" }));
+
 app.post("/event-register/add", (req, res) => {
   const userInfo = req.body;
   const error = eventService.validateUserInfo(userInfo);
@@ -16,8 +17,8 @@ app.post("/event-register/add", (req, res) => {
     return;
   }
 
-  eventService.addEvent(userInfo);
-  res.status(200).send("User information saved successfully");
+  const data = eventService.addEvent(userInfo);
+  res.status(200).send(data);
 });
 
 app.get("/event-register/list/all", (req, res) => {
