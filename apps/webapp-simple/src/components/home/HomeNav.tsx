@@ -22,7 +22,7 @@ export const HomeNav = () => {
           <span className="navbar-toggler-icon"></span>
         </button>
         <div
-          className="collapse navbar-collapse justify-content-end"
+          className="gap-5 collapse navbar-collapse justify-content-end"
           id="navbarNav"
         >
           <Link className="nav-link active" to="/">

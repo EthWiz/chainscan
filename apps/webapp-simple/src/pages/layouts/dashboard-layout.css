@@ -1,0 +1,24 @@
+#wrapper {
+  overflow-x: hidden;
+}
+
+#sidebar-wrapper {
+  min-height: 100vh;
+  min-width: 20vh;
+  margin-left: 0rem;
+}
+
+#page-content-wrapper {
+  min-width: 100vw;
+}
+
+#wrapper.active #page-content-wrapper {
+  overflow-x: hidden;
+  margin-right: 15rem;
+}
+
+/* Additional styles for sidebar */
+#sidebar-wrapper .list-group-item:hover,
+#sidebar-wrapper .list-group-item:focus {
+  background-color: #0069d9;
+}
