@@ -17,6 +17,7 @@ const HomePage = () => {
           <div className="col-6">
             <h1 className="display-3">Welcome to Chainscan!</h1>
             <h2 className="lead text-muted">Open source project</h2>
+            <p>this is new</p>
           </div>
           <div className="col-6">
             <img

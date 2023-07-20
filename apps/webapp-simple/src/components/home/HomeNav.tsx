@@ -28,9 +28,6 @@ export const HomeNav = () => {
           <Link className="nav-link active" to="/">
             Home
           </Link>
-          <Link className="nav-link" to="/alerts">
-            Alerts
-          </Link>
           <Link className="btn btn-primary" to="/app">
             App
           </Link>
