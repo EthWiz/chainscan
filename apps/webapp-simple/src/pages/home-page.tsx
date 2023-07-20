@@ -34,14 +34,10 @@ const HomePage = () => {
             )}
             {isAuthenticated && (
               <>
-                <li className="nav-item">
-                  <Link to="/app" className="nav-link">
-                    App
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <LogoutButton />
-                </li>
+                <button className="btn btn-primary me-3">
+                  <Link to="/app">App</Link>
+                </button>
+                <LogoutButton className="btn-outline-primary" />
               </>
             )}
           </div>
