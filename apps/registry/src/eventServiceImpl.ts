@@ -1,8 +1,14 @@
-import { UserInfo, EventService } from "@chainscan/ts_interfaces";
+import {
+  UserInfo,
+  EventService,
+  SetTelegramDestination,
+  DestinationRegistry,
+} from "@chainscan/ts_interfaces";
 import * as fs from "fs";
 import { ethers } from "ethers";
 
 const filename = "./apps/registry/data/event-register.json";
+const destinationsRegister = "./apps/registry/data/destinationsRegister.json";
 
 export class EventServiceImpl implements EventService {
   private getEventData(): UserInfo[] {

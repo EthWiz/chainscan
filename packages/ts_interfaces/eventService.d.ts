@@ -5,7 +5,6 @@ export interface UserInfo {
   signatureHash?: string;
   alertId?: string;
 }
-
 export interface EventService {
   validateUserInfo(userInfo: UserInfo): string | null;
   addEvent(userInfo: UserInfo): void;

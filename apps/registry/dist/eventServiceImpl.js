@@ -27,6 +27,7 @@ exports.EventServiceImpl = void 0;
 const fs = __importStar(require("fs"));
 const ethers_1 = require("ethers");
 const filename = "./apps/registry/data/event-register.json";
+const destinationsRegister = "./apps/registry/data/destinationsRegister.json";
 class EventServiceImpl {
     getEventData() {
         if (fs.existsSync(filename)) {
@@ -50,6 +51,32 @@ class EventServiceImpl {
             return "Bad Request: missing event to monitor";
         }
         return null;
+    }
+    setTelegramDestination(data) {
+        console.log(data);
+        let info;
+        try {
+            info = JSON.parse(fs.readFileSync(destinationsRegister, "utf8"));
+            if (info[data.userId]) {
+                const userInfo = info[data.userId];
+                userInfo.destinations.telegram = data.chatId;
+                fs.writeFileSync(destinationsRegister, JSON.stringify(userInfo));
+            }
+            else {
+                info[data.userId] = {
+                    chatId: data.chatId,
+                    destinations: {
+                        telegram: data.chatId,
+                    },
+                };
+                fs.writeFileSync(destinationsRegister, JSON.stringify(info));
+            }
+            return "ok";
+        }
+        catch (err) {
+            console.log(err);
+            return err instanceof Error ? err.message : "An error occurred";
+        }
     }
     saveEventData(data) {
         fs.writeFileSync(filename, JSON.stringify(data));

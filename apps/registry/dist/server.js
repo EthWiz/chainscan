@@ -20,6 +20,15 @@ app.post("/event-register/add", (req, res) => {
     const data = eventService.addEvent(userInfo);
     res.status(200).send(data);
 });
+app.post("/destinations", (req, res) => {
+    const data = eventService.setTelegramDestination(req.body);
+    console.log(data);
+    if (data !== "ok") {
+        res.status(400).send(data);
+        return;
+    }
+    res.status(200).send(data);
+});
 app.get("/event-register/list/all", (req, res) => {
     const data = eventService.listEvents();
     if (data.length === 0) {

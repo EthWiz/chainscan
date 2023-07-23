@@ -14,12 +14,12 @@ const HomePage = () => {
       <HomeNav />
       <div style={{ paddingTop: "20vh" }} className="container mx-auto">
         <div className="row">
-          <div className="col-6">
+          <div className="col-sm-12 col-md-6">
             <h1 className="display-3">Welcome to Chainscan!</h1>
             <h2 className="lead text-muted">Open source project</h2>
             <p>this is new</p>
           </div>
-          <div className="col-6">
+          <div className="col-sm-12 col-md-6">
             <img
               className="hero-img"
               src="https://i.stack.imgur.com/b7TDL.jpg"

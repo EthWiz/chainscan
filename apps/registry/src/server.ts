@@ -1,13 +1,17 @@
 import express, { Application } from "express";
 import bodyParser from "body-parser";
 import { EventServiceImpl } from "./eventServiceImpl";
+import { DestinationServiceImpl } from "./destinationServiceImpl";
 import cors from "cors";
 
 const app: Application = express();
 const eventService = new EventServiceImpl();
+const destinationService = new DestinationServiceImpl();
 
 app.use(express.json());
 app.use(cors({ origin: "http://localhost:5173" }));
+
+// Events registery end points
 
 app.post("/event-register/add", (req, res) => {
   const userInfo = req.body;
@@ -56,6 +60,27 @@ app.get("/event-register/list/:chatId?", (req, res) => {
   }
 });
 
+//Destinations end points
+
+app.post("/destinations", (req, res) => {
+  const data = destinationService.setTelegramDestination(req.body);
+  console.log(data);
+  if (data !== "ok") {
+    res.status(400).send(data);
+    return;
+  }
+  res.status(200).send(data);
+});
+
+app.get("/destinations/:userId", (req, res) => {
+  try {
+    const data = destinationService.getDestinations(req.params.userId);
+    res.status(200).send(data);
+  } catch (error) {
+    console.error(error);
+    res.status(400).send({ error: (error as Error).message });
+  }
+});
 app.listen(3005, () => {
   console.log("Server running on port 3005");
 });
