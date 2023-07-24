@@ -10,7 +10,10 @@ import Destinations from "./pages/destinations-page";
 import CallbackPage from "./pages/callback-page";
 import AuthenticationGuard from "./components/auth0/AuthenticationGuard";
 import { UserDestination } from "@chainscan/ts_interfaces";
-const base_url = import.meta.env.VITE_API_URL as string;
+import useAlerts from "./hooks/useAlerts";
+import useDestinations from "./hooks/useDestinations";
+import { DestinationsContext } from "./contexts/DestinationsContext";
+const base_url = import.meta.env.VITE_BASE_URL_REGISTRY as string;
 
 function App() {
   const { user, isAuthenticated, isLoading } = useAuth0();
@@ -22,59 +25,34 @@ function App() {
   const [userId, setUserId] = useState<string>("");
 
   useEffect(() => {
-    const getAlerts = async (): Promise<Alert[]> => {
-      const response = await fetch(
-        `https://${base_url}/event-register/list/all`
-      );
-      const data = (await response.json()) as Alert[];
-      return data;
-    };
-
-    getAlerts()
-      .then((data) => {
-        setAlerts(data);
-      })
-      .catch((error) => {
-        console.error("An error occurred while fetching alerts:", error);
-      });
-
     if (!isLoading && isAuthenticated) {
       const userId = user.sub.split("|")[1];
       setUserId(userId);
-
-      const getDestinations = async (): Promise<UserDestination> => {
-        const response = await fetch(`${base_url}/destinations/${userId}`);
-        const data = await response.json();
-        return data;
-      };
-
-      getDestinations()
-        .then((data) => {
-          setDestinations(data);
-        })
-        .catch((error) => {
-          console.error(
-            "An error occurred while fetching destinations:",
-            error
-          );
-        });
     }
   }, [isLoading, isAuthenticated, user]);
 
+  useAlerts(userId, base_url, setAlerts);
+  useDestinations(userId, base_url, setDestinations);
+
   return (
     <>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route
-          path="/app"
-          element={<AuthenticationGuard component={DashboardLayout} />}
-        >
-          <Route index element={<Alerts alerts={alerts} />} />
-          <Route path="create-alert" element={<CreateAlert />} />
-          <Route path="destinations" element={<Destinations />} />
-        </Route>
-        <Route path="/callback" element={<CallbackPage />} />
-      </Routes>
+      <DestinationsContext.Provider value={{ destinations, setDestinations }}>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route
+            path="/app"
+            element={<AuthenticationGuard component={DashboardLayout} />}
+          >
+            <Route index element={<Alerts alerts={alerts} />} />
+            <Route path="create-alert" element={<CreateAlert />} />
+            <Route
+              path="destinations"
+              element={<Destinations destinations={destinations} />}
+            />
+          </Route>
+          <Route path="/callback" element={<CallbackPage />} />
+        </Routes>
+      </DestinationsContext.Provider>
     </>
   );
 }

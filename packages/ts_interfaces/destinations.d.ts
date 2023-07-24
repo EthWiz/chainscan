@@ -20,5 +20,5 @@ export interface SetTelegramDestination {
 
 export interface DestinationService {
   setTelegramDestination(data: SetTelegramDestination): string;
-  getDestinations(userId: string): UserDestination;
+  getDestinations(userId: string): UserDestination | null;
 }

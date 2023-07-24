@@ -26,12 +26,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.EventServiceImpl = void 0;
 const fs = __importStar(require("fs"));
 const ethers_1 = require("ethers");
+const path = require("path");
+const jsonPath = path.join(__dirname, "../data/event-register.json");
 const filename = "./apps/registry/data/event-register.json";
 const destinationsRegister = "./apps/registry/data/destinationsRegister.json";
 class EventServiceImpl {
     getEventData() {
-        if (fs.existsSync(filename)) {
-            return JSON.parse(fs.readFileSync(filename, "utf8"));
+        if (fs.existsSync(jsonPath)) {
+            return JSON.parse(fs.readFileSync(jsonPath, "utf8"));
         }
         else {
             return [];
@@ -41,7 +43,10 @@ class EventServiceImpl {
         if (!info) {
             return "Bad Request: event information";
         }
-        if (!info["chatId"]) {
+        if (!info["chainId"]) {
+            return "Bad Request: missing chain id";
+        }
+        if (!info["userId"]) {
             return "Bad Request: missing chat id";
         }
         if (!info["contractAddress"]) {
@@ -52,34 +57,8 @@ class EventServiceImpl {
         }
         return null;
     }
-    setTelegramDestination(data) {
-        console.log(data);
-        let info;
-        try {
-            info = JSON.parse(fs.readFileSync(destinationsRegister, "utf8"));
-            if (info[data.userId]) {
-                const userInfo = info[data.userId];
-                userInfo.destinations.telegram = data.chatId;
-                fs.writeFileSync(destinationsRegister, JSON.stringify(userInfo));
-            }
-            else {
-                info[data.userId] = {
-                    chatId: data.chatId,
-                    destinations: {
-                        telegram: data.chatId,
-                    },
-                };
-                fs.writeFileSync(destinationsRegister, JSON.stringify(info));
-            }
-            return "ok";
-        }
-        catch (err) {
-            console.log(err);
-            return err instanceof Error ? err.message : "An error occurred";
-        }
-    }
     saveEventData(data) {
-        fs.writeFileSync(filename, JSON.stringify(data));
+        fs.writeFileSync(jsonPath, JSON.stringify(data));
     }
     generateAlertId() {
         return (Math.random().toString(36).substring(2, 15) +
@@ -94,7 +73,7 @@ class EventServiceImpl {
         userInfo["alertId"] = this.generateAlertId();
         data.push(userInfo);
         this.saveEventData(data);
-        return userInfo;
+        return "Successfully registered event! Alert Id:" + userInfo["alertId"];
     }
     listEvents() {
         return this.getEventData();
@@ -109,9 +88,17 @@ class EventServiceImpl {
         }
         return false;
     }
-    listEventsByChatId(chatId) {
+    listEventsByUserId(userId) {
         let data = this.getEventData();
-        return data.filter((item) => item.chatId === chatId);
+        console.log("in eventServiceImpl.ts - alerts:" + data);
+        let filteredData = data.filter((alert) => alert.userId === userId);
+        console.log("this is filtered:" + filteredData);
+        if (filteredData.length > 0) {
+            return filteredData;
+        }
+        else {
+            return null;
+        }
     }
 }
 exports.EventServiceImpl = EventServiceImpl;

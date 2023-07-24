@@ -5,18 +5,19 @@ import {
   UserDestination,
 } from "@chainscan/ts_interfaces";
 import * as fs from "fs";
-const destinationsRegister = "./apps/registry/data/destinationRegister.json";
+const path = require("path");
+const jsonPath = path.join(__dirname, "../data/destinationRegister.json");
 
 export class DestinationServiceImpl implements DestinationService {
   setTelegramDestination(data: SetTelegramDestination): string {
     console.log(data);
     let destinations: DestinationRegistry;
     try {
-      destinations = JSON.parse(fs.readFileSync(destinationsRegister, "utf8"));
+      destinations = JSON.parse(fs.readFileSync(jsonPath, "utf8"));
       if (destinations[data.userId]) {
         destinations[data.userId].telegram.chatId = data.chatId;
         destinations[data.userId].telegram.botName = data.telegramBotName;
-        fs.writeFileSync(destinationsRegister, JSON.stringify(destinations));
+        fs.writeFileSync(jsonPath, JSON.stringify(destinations));
       } else {
         destinations[data.userId] = {
           telegram: {
@@ -25,7 +26,7 @@ export class DestinationServiceImpl implements DestinationService {
           },
           webhook: { urls: [] },
         };
-        fs.writeFileSync(destinationsRegister, JSON.stringify(destinations));
+        fs.writeFileSync(jsonPath, JSON.stringify(destinations));
       }
       return "ok";
     } catch (err) {
@@ -34,16 +35,18 @@ export class DestinationServiceImpl implements DestinationService {
     }
   }
 
-  getDestinations(userId: string): UserDestination {
+  getDestinations(userId: string): UserDestination | null {
     try {
       const destinations: DestinationRegistry = JSON.parse(
-        fs.readFileSync(destinationsRegister, "utf8")
+        fs.readFileSync(jsonPath, "utf8")
       );
-
+      console.log("looking for" + userId);
       if (destinations[userId]) {
+        console.log(destinations[userId]);
         return destinations[userId];
       } else {
-        throw new Error("user not found");
+        console.log("user not found");
+        return null;
       }
     } catch (err) {
       console.error(err);

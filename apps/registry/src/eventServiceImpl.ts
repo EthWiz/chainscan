@@ -1,29 +1,34 @@
 import {
-  UserInfo,
+  UserEventAlert,
   EventService,
   SetTelegramDestination,
   DestinationRegistry,
 } from "@chainscan/ts_interfaces";
 import * as fs from "fs";
 import { ethers } from "ethers";
+const path = require("path");
+const jsonPath = path.join(__dirname, "../data/event-register.json");
 
 const filename = "./apps/registry/data/event-register.json";
 const destinationsRegister = "./apps/registry/data/destinationsRegister.json";
 
 export class EventServiceImpl implements EventService {
-  private getEventData(): UserInfo[] {
-    if (fs.existsSync(filename)) {
-      return JSON.parse(fs.readFileSync(filename, "utf8"));
+  private getEventData(): UserEventAlert[] {
+    if (fs.existsSync(jsonPath)) {
+      return JSON.parse(fs.readFileSync(jsonPath, "utf8"));
     } else {
       return [];
     }
   }
 
-  public validateUserInfo(info: UserInfo): string | null {
+  public validateUserInfo(info: UserEventAlert): string | null {
     if (!info) {
       return "Bad Request: event information";
     }
-    if (!info["chatId"]) {
+    if (!info["chainId"]) {
+      return "Bad Request: missing chain id";
+    }
+    if (!info["userId"]) {
       return "Bad Request: missing chat id";
     }
     if (!info["contractAddress"]) {
@@ -36,8 +41,8 @@ export class EventServiceImpl implements EventService {
     return null;
   }
 
-  private saveEventData(data: UserInfo[]): void {
-    fs.writeFileSync(filename, JSON.stringify(data));
+  private saveEventData(data: UserEventAlert[]): void {
+    fs.writeFileSync(jsonPath, JSON.stringify(data));
   }
 
   private generateAlertId(): string {
@@ -51,7 +56,7 @@ export class EventServiceImpl implements EventService {
     return ethers.keccak256(ethers.toUtf8Bytes(eventName));
   }
 
-  public addEvent(userInfo: UserInfo): object {
+  public addEvent(userInfo: UserEventAlert): string {
     let data = this.getEventData();
 
     userInfo["signatureHash"] = this.generateSignatureHash(
@@ -61,10 +66,10 @@ export class EventServiceImpl implements EventService {
 
     data.push(userInfo);
     this.saveEventData(data);
-    return userInfo;
+    return "Successfully registered event! Alert Id:" + userInfo["alertId"];
   }
 
-  public listEvents(): UserInfo[] {
+  public listEvents(): UserEventAlert[] {
     return this.getEventData();
   }
 
@@ -82,8 +87,15 @@ export class EventServiceImpl implements EventService {
     return false;
   }
 
-  public listEventsByChatId(chatId: number): UserInfo[] {
+  public listEventsByUserId(userId: string): UserEventAlert[] | null {
     let data = this.getEventData();
-    return data.filter((item) => item.chatId === chatId);
+    console.log("in eventServiceImpl.ts - alerts:" + data);
+    let filteredData = data.filter((alert) => alert.userId === userId);
+    console.log("this is filtered:" + filteredData);
+    if (filteredData.length > 0) {
+      return filteredData;
+    } else {
+      return null;
+    }
   }
 }
