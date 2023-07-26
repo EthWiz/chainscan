@@ -1,24 +1,31 @@
-#wrapper {
-  overflow-x: hidden;
+.form-control-primary {
+  margin: 10px;
+  opacity: 0.2;
+  border-radius: 2px;
 }
 
-#sidebar-wrapper {
-  min-height: 100vh;
-  min-width: 20vh;
-  margin-left: 0rem;
+.sidebar {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  top: 0;
+  z-index: 100;
+  padding: 70px 0 0 10px;
+  border-right: 1px solid #d3d3d3;
 }
 
-#page-content-wrapper {
-  min-width: 100vw;
+.left-sidebar {
+  position: sticky;
+  width: 100px;
+  top: 0;
+  height: calc(100vh - 70px);
 }
 
-#wrapper.active #page-content-wrapper {
-  overflow-x: hidden;
-  margin-right: 15rem;
+.sidebar-nav li .nav-link {
+  color: #333;
+  font-weight: 500;
 }
 
-/* Additional styles for sidebar */
-#sidebar-wrapper .list-group-item:hover,
-#sidebar-wrapper .list-group-item:focus {
-  background-color: #0069d9;
+main {
+  padding: 120px;
 }

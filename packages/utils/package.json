@@ -1,0 +1,28 @@
+{
+  "name": "@chainscan/utils",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "pnpm run build:cjs && pnpm run build:esm",
+    "build:cjs": "cross-env BABEL_ENV=cjs babel src --extensions '.ts,.tsx' --out-dir dist/cjs",
+    "build:esm": "cross-env BABEL_ENV=esm babel src --extensions '.ts,.tsx' --out-dir dist/esm"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.4.0",
+    "ethers": "^6.6.2",
+    "tsc": "^2.0.4"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.22.9",
+    "@babel/plugin-transform-modules-commonjs": "^7.22.5",
+    "@babel/preset-env": "^7.22.9",
+    "@babel/preset-typescript": "^7.22.5",
+    "cross-env": "^7.0.3"
+  }
+}

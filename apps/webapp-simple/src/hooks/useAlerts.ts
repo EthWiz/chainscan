@@ -8,7 +8,7 @@ const useAlerts = (
 ) => {
   useEffect(() => {
     const getAlerts = async (): Promise<Alert[]> => {
-      const response = await fetch(`${base_url}/register/events/${userId}`);
+      const response = await fetch(`${base_url}/alerts/${userId}`);
       if (response.ok) {
         const data = (await response.json()) as Alert[];
         return data;

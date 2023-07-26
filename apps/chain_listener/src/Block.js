@@ -1,62 +1,73 @@
-    const axios = require('axios');
+const axios = require("axios");
 
-    class Block {
-        constructor(logs, base_url) {
-            this.logs = logs;
-            this.registers = [];
-            this.base_url = base_url;
+class Block {
+  constructor(logs, base_url_registry) {
+    this.logs = logs;
+    this.base_url_registry = base_url_registry;
+  }
+
+  chunkLogs(size) {
+    const chunks = [];
+    for (let i = 0; i < this.logs.length; i += size) {
+      chunks.push(this.logs.slice(i, i + size));
+    }
+    return chunks;
+  }
+
+  removeDuplicates(logs) {
+    let uniqueLogs = new Map();
+    logs.forEach((log) => {
+      uniqueLogs.set(log.address.toLowerCase() + log.topics[0], log);
+    });
+    logs = Array.from(uniqueLogs.values());
+    return logs;
+  }
+
+  async checkEvents() {
+    const matchedEvents = [];
+    console.log(`this is logs before length: ${this.logs.length}`);
+    this.logs = this.removeDuplicates(this.logs);
+    console.log(`this is logs after length: ${this.logs.length}`);
+
+    const chunks = this.chunkLogs(20);
+
+    for (const logs of chunks) {
+      const payload = logs.map((log) => ({
+        ContractAddress: log.address.toLowerCase(),
+        EventHash: log.topics[0],
+      }));
+
+      try {
+        const response = await axios.post(
+          `${this.base_url_registry}/alerts/check-alerts`,
+          payload
+        );
+
+        const { data } = response;
+        if (data && Array.isArray(data)) {
+          data.forEach((event) => {
+            console.log(JSON.stringify(event));
+          });
         }
-
-        async init() {
-            try {
-                this.registers = await this.getRegistryData();
-                if (!Array.isArray(this.registers)) {
-                    throw new Error('Registry data is not an array');
-                }
-            } catch (error) {
-                console.error('Error getting registry data:', error);
-            }
+        if (data && Array.isArray(data)) {
+          data.forEach((event) => {
+            matchedEvents.push(event);
+          });
         }
-
-        getRegistryData() {
-            return axios.get(`http://${this.base_url}:3005/event-register/list/all`)
-                .then(response => {
-                    if (response.data === 'No register file') {
-                        throw new Error('No register file');
-                    }
-                    return response.data;
-                })
-                .catch(err => { throw err; });
+      } catch (err) {
+        console.error(`Request failed with error: ${err.message}`);
+        if (err.response) {
+          console.error(err.response.data);
+          console.error(err.response.status);
+          console.error(err.response.headers);
+        } else if (err.request) {
+          console.error(err.request);
         }
-
-        checkEvents() {
-            if (!this.registers) {
-                console.error('No registers available');
-                return;
-            }
-
-            const matchedEvents = [];
-            this.logs.forEach(log => {
-                this.registers.forEach(register => {
-                    if (log.address.toLowerCase() === register.contractAddress.toLowerCase()) {
-                        // check if there is an overlap in log topics and registered topics
-                        const commonTopics = log.topics.filter(topic => topic === register.signatureHash);
-                        if (commonTopics.length > 0) {
-                            const info = {
-                                blockNumber: log.blockNumber,
-                                txHash: log.transactionHash,
-                                eventData: log.data,
-                                topics: log.topics,
-                                register: register
-                            };
-                            matchedEvents.push(info);
-                            console.log(info);
-                        }
-                    }
-                });
-            });
-            return matchedEvents;
-        }
+      }
     }
 
-    module.exports = Block;
+    return matchedEvents;
+  }
+}
+
+module.exports = Block;

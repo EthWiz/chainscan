@@ -10,13 +10,8 @@ app.use(bodyParser.json());
 
 const TELEGRAM_BOT_TOKEN = process.env.BOT_TOKEN;
 const bot = new TelegramBot(TELEGRAM_BOT_TOKEN, { polling: true });
-// const base_url_registry = process.env.BASE_URL_REGISTRY;
-const base_url_registry = "http://localhost:3005";
+const base_url_registry = process.env.BASE_URL_REGISTRY_SERVICE;
 console.log(`Base URL: ${base_url_registry}`);
-
-bot.onText(/\/check/, (msg, match) => {
-  console.log("received /check command");
-});
 
 bot.onText(/\/start (.+)/, (msg, match) => {
   const chatId = msg.chat.id;
@@ -48,18 +43,31 @@ app.use(express.json());
 app.post("/webhook", async (req, res) => {
   console.log("received new block");
   let data = req.body;
-  for (let i = 0; i < data.length; i++) {
-    const alert = data[i];
-    console.log(alert.register.chatId);
-    const chatId = alert.register.chatId;
-    const message = `Just in! On block ${alert.blockNumber} we identified an ${alert.eventName}, if you want to investigate, tx hash is ${alert.txHash}`;
-    if (chatId !== null) {
-      await bot.sendMessage(chatId, message).catch((error) => {
+  data.forEach((alerts) => {
+    alerts = JSON.parse(alerts.alerts);
+    alerts.forEach(async (alert) => {
+      console.log(alert);
+      const destinations = await axios.get(
+        `${base_url_registry}/destinations/${alert.userId}`
+      );
+      console.log(`destinations: ${JSON.stringify(destinations.data)}`);
+      if (!destinations.data && destinations.data.chatId == "") {
+        return;
+      }
+      let message = "";
+      if (alert.message) {
+        message = alert.message;
+      } else {
+        message = `Just in! On block ${alert.blockNumber} we identified an ${alert.eventName}, if you want to investigate, tx hash is ${alert.txHash}`;
+      }
+      try {
+        await bot.sendMessage(destinations.data.chatId, message);
+        await sleep(500);
+      } catch (error) {
         console.error("Error sending message:", error.message);
-      });
-      await sleep(500);
-    }
-  }
+      }
+    });
+  });
 });
 
 function sleep(ms) {

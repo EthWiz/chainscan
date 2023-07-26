@@ -1,19 +1,25 @@
 import { Dispatch, SetStateAction, useEffect } from "react";
-import { UserDestination } from "@chainscan/ts_interfaces";
+import { Destination } from "@chainscan/ts_interfaces";
+
+interface DestinationAPIResponse {
+  destination: Destination;
+  userId: string;
+}
 
 const useDestinations = (
   userId: string,
   base_url: string,
-  setDestinations: Dispatch<SetStateAction<UserDestination>>
+  setDestinations: Dispatch<SetStateAction<Destination>>
 ) => {
   useEffect(() => {
-    const getDestinations = async (): Promise<UserDestination> => {
+    const getDestinations = async (): Promise<Destination> => {
       const response = await fetch(`${base_url}/destinations/${userId}`);
       if (response.ok) {
-        const data = (await response.json()) as UserDestination;
-        return data;
+        const data = (await response.json()) as DestinationAPIResponse;
+        const userData = data.destination;
+        return userData;
       }
-      return { telegram: { botName: "", chatId: 0 }, webhook: { urls: [] } };
+      return { botName: "", chatId: 0 };
     };
 
     if (userId) {

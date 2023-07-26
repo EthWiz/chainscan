@@ -9,19 +9,22 @@ import CreateAlert from "./pages/createAlert-page";
 import Destinations from "./pages/destinations-page";
 import CallbackPage from "./pages/callback-page";
 import AuthenticationGuard from "./components/auth0/AuthenticationGuard";
-import { UserDestination } from "@chainscan/ts_interfaces";
+import { Destination } from "@chainscan/ts_interfaces";
 import useAlerts from "./hooks/useAlerts";
 import useDestinations from "./hooks/useDestinations";
+import { AlertsContext } from "./contexts/AlertsContext";
 import { DestinationsContext } from "./contexts/DestinationsContext";
+import { UserIDContext } from "./contexts/UserIDContext";
 const base_url = import.meta.env.VITE_BASE_URL_REGISTRY as string;
 
 function App() {
   const { user, isAuthenticated, isLoading } = useAuth0();
   const [alerts, setAlerts] = useState<Alert[] | []>([]);
-  const [destinations, setDestinations] = useState<UserDestination>({
-    telegram: { botName: "", chatId: 0 },
-    webhook: { urls: [] },
+  const [destinations, setDestinations] = useState<Destination>({
+    botName: "",
+    chatId: 0,
   });
+
   const [userId, setUserId] = useState<string>("");
 
   useEffect(() => {
@@ -36,23 +39,26 @@ function App() {
 
   return (
     <>
-      <DestinationsContext.Provider value={{ destinations, setDestinations }}>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route
-            path="/app"
-            element={<AuthenticationGuard component={DashboardLayout} />}
+      <UserIDContext.Provider value={{ userId, setUserId }}>
+        <AlertsContext.Provider value={{ alerts, setAlerts }}>
+          <DestinationsContext.Provider
+            value={{ destinations, setDestinations }}
           >
-            <Route index element={<Alerts alerts={alerts} />} />
-            <Route path="create-alert" element={<CreateAlert />} />
-            <Route
-              path="destinations"
-              element={<Destinations destinations={destinations} />}
-            />
-          </Route>
-          <Route path="/callback" element={<CallbackPage />} />
-        </Routes>
-      </DestinationsContext.Provider>
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route
+                path="/app"
+                element={<AuthenticationGuard component={DashboardLayout} />}
+              >
+                <Route index element={<Alerts />} />
+                <Route path="create-alert" element={<CreateAlert />} />
+                <Route path="destinations" element={<Destinations />} />
+              </Route>
+              <Route path="/callback" element={<CallbackPage />} />
+            </Routes>
+          </DestinationsContext.Provider>
+        </AlertsContext.Provider>
+      </UserIDContext.Provider>
     </>
   );
 }

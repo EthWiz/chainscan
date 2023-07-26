@@ -1,11 +1,14 @@
 import { Alert as AlertType } from "@chainscan/ts_interfaces";
 import { Alert } from "../components/Alert";
+import { AlertsContext } from "../contexts/AlertsContext";
+import { useContext } from "react";
+export const Alerts: React.FC = () => {
+  const { alerts } = useContext(AlertsContext);
 
-interface AlertsProps {
-  alerts: AlertType[];
-}
-
-export const Alerts: React.FC<AlertsProps> = ({ alerts }) => {
+  if (!alerts || (alerts.length > 0 && !alerts[0].event)) {
+    // Return some fallback UI or a default message
+    return <p>Event details not available</p>;
+  }
   return (
     <div className="container">
       <div className="row">
