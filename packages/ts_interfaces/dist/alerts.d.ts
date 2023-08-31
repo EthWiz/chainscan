@@ -30,7 +30,7 @@ export interface CreateEventAlert {
 }
 
 export interface AlertsServiceInterface {
-  getAlertsForUser(userId: string): Promise<Alert[]>;
+  getEventsByUserId(userId: string): Promise<Alert[]>;
   createAlert(data: CreateEventAlert): Promise<Alert>;
 }
 

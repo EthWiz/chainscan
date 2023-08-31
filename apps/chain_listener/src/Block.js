@@ -25,17 +25,14 @@ class Block {
 
   async checkEvents() {
     const matchedEvents = [];
-    console.log(`this is logs before length: ${this.logs.length}`);
     this.logs = this.removeDuplicates(this.logs);
-    console.log(`this is logs after length: ${this.logs.length}`);
 
     const chunks = this.chunkLogs(20);
 
     for (const logs of chunks) {
-      const payload = logs.map((log) => ({
-        ContractAddress: log.address.toLowerCase(),
-        EventHash: log.topics[0],
-      }));
+      const payload = logs.map(
+        (log) => `${log.address.toLowerCase()}#${log.topics[0]}`
+      );
 
       try {
         const response = await axios.post(
